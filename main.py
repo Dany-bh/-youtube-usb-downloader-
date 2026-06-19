@@ -233,7 +233,6 @@ class YouTubeUSBApp:
             icon=ft.Icons.FOLDER_OPEN,
             icon_color=ft.Colors.BLUE_GREY_400,
             bgcolor="#0F172A",
-            visible=os.name == 'nt', # Only show folder picker on PC
             on_click=self.browse_pc_directory
         )
 
