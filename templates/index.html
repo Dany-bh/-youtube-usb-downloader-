@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube USB Downloader</title>
+  <!-- PWA Manifest & Meta Tags -->
+  <link rel="manifest" href="/static/manifest.json">
+  <meta name="theme-color" content="#0F172A">
+  <link rel="icon" type="image/svg+xml" href="/static/icon.svg">
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    :root {
+      --bg: #0B0F19;
+      --card-bg: rgba(30, 41, 59, 0.7);
+      --input-bg: #0F172A;
+      --fg: #F8FAFC;
+      --fg-muted: #94A3B8;
+      --accent-green: #10B981;
+      --accent-green-hover: #059669;
+      --accent-blue: #3B82F6;
+      --accent-blue-hover: #2563EB;
+      --border: rgba(71, 85, 105, 0.4);
+      --border-focus: #3B82F6;
+      --error: #EF4444;
+      --font-title: 'Space Grotesk', sans-serif;
+      --font-body: 'Outfit', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--fg);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.1) 0%, transparent 40%);
+    }
+
+    /* PWA Install Banner */
+    #pwa-install-banner {
+      display: none;
+      width: 100%;
+      max-width: 680px;
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(16, 185, 129, 0.2));
+      border: 1px stroke var(--accent-blue);
+      border-radius: 16px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+      align-items: center;
+      justify-content: space-between;
+      animation: slideIn 0.5s ease-out;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateY(-20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .pwa-text {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .pwa-text i {
+      font-size: 24px;
+      color: var(--accent-blue);
+      animation: pulse 2s infinite alternate;
+    }
+
+    .pwa-btn {
+      background-color: var(--accent-blue);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: var(--font-body);
+      transition: background-color 0.2s, transform 0.1s;
+    }
+
+    .pwa-btn:hover {
+      background-color: var(--accent-blue-hover);
+      transform: scale(1.03);
+    }
+
+    /* Container Card */
+    .app-card {
+      width: 100%;
+      max-width: 680px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 30px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+      position: relative;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      margin-bottom: 5px;
+    }
+
+    header h1 {
+      font-family: var(--font-title);
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #3B82F6 0%, #10B981 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    header p {
+      font-size: 14px;
+      color: var(--fg-muted);
+    }
+
+    /* Sections */
+    .step-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .step-title {
+      font-family: var(--font-title);
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--accent-blue);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Input group */
+    .input-group {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .input-control {
+      flex: 1;
+      background-color: var(--input-bg);
+      border: 1px solid var(--border);
+      color: var(--fg);
+      font-family: var(--font-body);
+      font-size: 14px;
+      padding: 12px 16px;
+      border-radius: 12px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .input-control:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
+
+    /* Buttons */
+    .btn {
+      border: none;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background-color 0.2s, transform 0.1s, opacity 0.2s;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-blue {
+      background-color: var(--accent-blue);
+      color: white;
+    }
+
+    .btn-blue:hover:not(:disabled) {
+      background-color: var(--accent-blue-hover);
+    }
+
+    .btn-green {
+      background-color: var(--accent-green);
+      color: white;
+    }
+
+    .btn-green:hover:not(:disabled) {
+      background-color: var(--accent-green-hover);
+    }
+
+    .btn-dark {
+      background-color: var(--input-bg);
+      color: var(--fg-muted);
+      border: 1px solid var(--border);
+    }
+
+    .btn-dark:hover:not(:disabled) {
+      border-color: var(--fg-muted);
+      color: var(--fg);
+    }
+
+    /* Video Info Box */
+    .video-info {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px dashed rgba(16, 185, 129, 0.3);
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 14px;
+      display: none;
+      align-items: center;
+      gap: 12px;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .video-info i {
+      font-size: 20px;
+      color: var(--accent-green);
+    }
+
+    .video-info-content {
+      flex: 1;
+    }
+
+    .video-title {
+      font-weight: 600;
+      color: var(--fg);
+    }
+
+    .video-channel {
+      font-size: 12px;
+      color: var(--fg-muted);
+      margin-top: 2px;
+    }
+
+    /* Dropdown/Select */
+    select.input-control {
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      background-size: 16px;
+      padding-right: 40px;
+      cursor: pointer;
+    }
+
+    /* Consent Checkbox */
+    .checkbox-container {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--fg-muted);
+      user-select: none;
+      padding: 5px 0;
+    }
+
+    .checkbox-container input {
+      display: none;
+    }
+
+    .custom-checkbox {
+      width: 20px;
+      height: 20px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.2s, border-color 0.2s;
+      flex-shrink: 0;
+      background-color: var(--input-bg);
+      margin-top: 1px;
+    }
+
+    .checkbox-container input:checked + .custom-checkbox {
+      background-color: var(--accent-green);
+      border-color: var(--accent-green);
+    }
+
+    .custom-checkbox i {
+      color: white;
+      font-size: 11px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .checkbox-container input:checked + .custom-checkbox i {
+      opacity: 1;
+    }
+
+    .checkbox-container:hover .custom-checkbox {
+      border-color: var(--fg-muted);
+    }
+
+    /* Progress Monitoring */
+    .progress-section {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      background: rgba(15, 23, 42, 0.5);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .progress-status {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .progress-details {
+      font-size: 12px;
+      color: var(--fg-muted);
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 10px;
+      background-color: var(--input-bg);
+      border-radius: 5px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-bar-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-green) 100%);
+      border-radius: 5px;
+      transition: width 0.3s ease;
+    }
+
+    /* Sound Wave Animation */
+    .sound-wave {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      height: 20px;
+    }
+
+    .sound-wave .bar {
+      width: 3px;
+      height: 4px;
+      background-color: var(--accent-green);
+      border-radius: 2px;
+      animation: bounce 0.8s ease-in-out infinite alternate;
+      animation-play-state: paused;
+    }
+
+    .sound-wave.active .bar {
+      animation-play-state: running;
+    }
+
+    .sound-wave .bar:nth-child(2) { animation-delay: 0.15s; }
+    .sound-wave .bar:nth-child(3) { animation-delay: 0.3s; }
+    .sound-wave .bar:nth-child(4) { animation-delay: 0.45s; }
+    .sound-wave .bar:nth-child(5) { animation-delay: 0.6s; }
+
+    @keyframes bounce {
+      from { height: 4px; transform: scaleY(1); }
+      to { height: 20px; transform: scaleY(1); }
+    }
+
+    @keyframes pulse {
+      from { transform: scale(1); filter: drop-shadow(0 0 2px rgba(59, 130, 246, 0.4)); }
+      to { transform: scale(1.1); filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.8)); }
+    }
+
+    /* Live Console */
+    .console-container {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .console-label {
+      font-size: 12px;
+      color: var(--fg-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .console-box {
+      width: 100%;
+      height: 100px;
+      background-color: #05070c;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 11px;
+      color: #a3b3c9;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .console-line.error {
+      color: var(--error);
+    }
+
+    /* Footer actions */
+    .footer-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .btn-download-container {
+      flex: 1;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .btn-download-container .btn {
+      width: auto;
+      min-width: 220px;
+    }
+
+    /* Responsive edits */
+    @media (max-width: 580px) {
+      body {
+        padding: 12px;
+      }
+      .app-card {
+        padding: 20px;
+        gap: 20px;
+      }
+      .footer-actions {
+        flex-direction: column-reverse;
+        gap: 15px;
+        align-items: stretch;
+      }
+      .btn-download-container {
+        justify-content: center;
+      }
+      .btn-download-container .btn {
+        width: 100%;
+      }
+    }
+
+    /* Custom Status Modal Styles */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(11, 15, 25, 0.85);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .modal-overlay.show {
+      opacity: 1;
+    }
+    .modal-card {
+      background: #1E293B;
+      border: 2px solid var(--accent-blue);
+      border-radius: 24px;
+      padding: 35px 30px;
+      width: 90%;
+      max-width: 420px;
+      text-align: center;
+      box-shadow: 0 0 40px rgba(59, 130, 246, 0.15);
+      transform: scale(0.75);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .modal-overlay.show .modal-card {
+      transform: scale(1);
+    }
+    .modal-icon-circle {
+      width: 70px;
+      height: 70px;
+      background: rgba(59, 130, 246, 0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      animation: popIcon 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+    .modal-icon-circle i {
+      font-size: 36px;
+      color: var(--accent-blue);
+    }
+    .modal-title {
+      font-family: var(--font-title);
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--fg);
+    }
+    .modal-message {
+      font-size: 14px;
+      color: var(--fg-muted);
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+    .modal-close-btn {
+      width: 100%;
+      padding: 14px 20px;
+    }
+    @keyframes popIcon {
+      0% { transform: scale(0); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* Modal status types */
+    .modal-card.success {
+      border-color: var(--accent-green);
+      box-shadow: 0 0 40px rgba(16, 185, 129, 0.25);
+    }
+    .modal-card.success .modal-icon-circle {
+      background: rgba(16, 185, 129, 0.1);
+    }
+    .modal-card.success .modal-icon-circle i {
+      color: var(--accent-green);
+    }
+    
+    .modal-card.error {
+      border-color: var(--error);
+      box-shadow: 0 0 40px rgba(239, 68, 68, 0.25);
+    }
+    .modal-card.error .modal-icon-circle {
+      background: rgba(239, 68, 68, 0.1);
+    }
+    .modal-card.error .modal-icon-circle i {
+      color: var(--error);
+    }
+
+    .modal-card.info {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 40px rgba(59, 130, 246, 0.25);
+    }
+    .modal-card.info .modal-icon-circle {
+      background: rgba(59, 130, 246, 0.1);
+    }
+    .modal-card.info .modal-icon-circle i {
+      color: var(--accent-blue);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Custom Status Modal -->
+  <div id="status-modal" class="modal-overlay">
+    <div id="modal-card" class="modal-card">
+      <div id="modal-icon-circle" class="modal-icon-circle">
+        <i id="modal-icon" class="fa-solid fa-circle-check"></i>
+      </div>
+      <h3 id="modal-title-text" class="modal-title">¡Completado!</h3>
+      <p id="modal-msg-text" class="modal-message">Tu archivo se ha procesado correctamente.</p>
+      <button id="modal-btn" class="btn modal-close-btn" onclick="closeStatusModal()">
+        Entendido
+      </button>
+    </div>
+  </div>
+
+  <!-- PWA Install Banner -->
+  <div id="pwa-install-banner">
+    <div class="pwa-text">
+      <i class="fa-solid fa-cloud-arrow-down"></i>
+      <div>
+        <h4 style="font-size: 14px; font-weight: 600;">Instalar como App Móvil</h4>
+        <p style="font-size: 11px; color: var(--fg-muted);">Añade YTUSB a tu pantalla de inicio para un acceso rápido.</p>
+      </div>
+    </div>
+    <button class="pwa-btn" id="pwa-install-btn">Instalar</button>
+  </div>
+
+  <div class="app-card">
+    <header>
+      <h1><i class="fa-solid fa-circle-play"></i> YouTube USB Downloader</h1>
+      <p>Descarga, convierte y guarda audio MP3 en tu USB o dispositivo móvil.</p>
+    </header>
+
+    <!-- STEP 1: Paste Link -->
+    <div class="step-section">
+      <div class="step-title">
+        <i class="fa-solid fa-1"></i> Paso 1: Pegar enlace de YouTube
+      </div>
+      <div class="input-group">
+        <input type="text" id="url-input" class="input-control" placeholder="https://www.youtube.com/watch?v=..." autocomplete="off">
+        <button id="btn-paste" class="btn btn-blue" title="Pegar del portapapeles">
+          <i class="fa-solid fa-paste"></i> <span class="hide-mobile">Pegar</span>
+        </button>
+      </div>
+      <!-- Metadata preview -->
+      <div id="video-info" class="video-info">
+        <i class="fa-solid fa-music"></i>
+        <div class="video-info-content">
+          <div id="video-title" class="video-title">Cargando...</div>
+          <div id="video-channel" class="video-channel">Canal</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2: Destination -->
+    <div class="step-section">
+      <div class="step-title">
+        <i class="fa-solid fa-2"></i> Paso 2: Destino de la descarga
+      </div>
+      <div class="input-group">
+        <select id="destination-select" class="input-control">
+          <option value="browser">📲 Descargar en este dispositivo (móvil/PC)</option>
+          <option disabled>--- Cargando unidades USB ---</option>
+        </select>
+        <button id="btn-refresh" class="btn btn-dark" title="Actualizar puertos USB de la PC">
+          <i class="fa-solid fa-rotate"></i>
+        </button>
+        <button id="btn-browse" class="btn btn-dark" title="Examinar carpeta en la PC">
+          <i class="fa-solid fa-folder-open"></i> <span class="hide-mobile">Examinar PC</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- STEP 3: Legal authorization -->
+    <div class="step-section">
+      <div class="step-title">
+        <i class="fa-solid fa-3"></i> Paso 3: Autorización legal
+      </div>
+      <label class="checkbox-container">
+        <input type="checkbox" id="consent-checkbox">
+        <span class="custom-checkbox">
+          <i class="fa-solid fa-check"></i>
+        </span>
+        <span>Confirmo que tengo los derechos de propiedad intelectual, licencia, o la expresa autorización del creador para descargar el audio.</span>
+      </label>
+    </div>
+
+    <!-- STEP 4: Live Progress Monitoring -->
+    <div id="progress-section" class="progress-section">
+      <div class="progress-header">
+        <div>
+          <div id="progress-status" class="progress-status">Preparando descarga...</div>
+          <div id="progress-details" class="progress-details">Conectando...</div>
+        </div>
+        <!-- Sound Wave Graphic -->
+        <div id="sound-wave" class="sound-wave">
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+        </div>
+      </div>
+      <div class="progress-bar-container">
+        <div id="progress-bar-fill" class="progress-bar-fill"></div>
+      </div>
+      
+      <!-- Console Logs -->
+      <div class="console-container">
+        <div class="console-label">
+          <i class="fa-solid fa-terminal"></i> Consola en vivo:
+        </div>
+        <div id="console-box" class="console-box"></div>
+      </div>
+    </div>
+
+    <!-- FOOTER ACTIONS -->
+    <div class="footer-actions">
+      <button id="btn-update-yt" class="btn btn-dark">
+        <i class="fa-solid fa-cloud-arrow-up"></i> Actualizar Motor (PC)
+      </button>
+      <div class="btn-download-container">
+        <button id="btn-download" class="btn btn-green" disabled>
+          <i class="fa-solid fa-circle-down"></i> Descargar y Guardar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Elements
+    const urlInput = document.getElementById('url-input');
+    const btnPaste = document.getElementById('btn-paste');
+    const videoInfo = document.getElementById('video-info');
+    const videoTitle = document.getElementById('video-title');
+    const videoChannel = document.getElementById('video-channel');
+    const destinationSelect = document.getElementById('destination-select');
+    const btnRefresh = document.getElementById('btn-refresh');
+    const btnBrowse = document.getElementById('btn-browse');
+    const consentCheckbox = document.getElementById('consent-checkbox');
+    const progressSection = document.getElementById('progress-section');
+    const progressStatus = document.getElementById('progress-status');
+    const progressDetails = document.getElementById('progress-details');
+    const progressBarFill = document.getElementById('progress-bar-fill');
+    const soundWave = document.getElementById('sound-wave');
+    const consoleBox = document.getElementById('console-box');
+    const btnUpdateYt = document.getElementById('btn-update-yt');
+    const btnDownload = document.getElementById('btn-download');
+    
+    let activeEventSource = null;
+    let debounceTimer = null;
+    let serverState = 'ready';
+    let hasFfmpeg = true;
+
+    // Load initial server status & drives
+    async function loadServerStatus() {
+      try {
+        const res = await fetch('/api/status');
+        const data = await res.json();
+        hasFfmpeg = data.has_ffmpeg;
+        if (!hasFfmpeg) {
+          logToConsole('[ERROR] FFmpeg no está instalado o no se detectó en la PC. El botón de descarga estará bloqueado.\n', true);
+          showStatusModal('Falta FFmpeg', 'ATENCIÓN: FFmpeg no está instalado o no se detectó en la PC del servidor. No se podrá realizar la conversión a MP3.', 'error');
+        }
+        updateDrivesList(data.drives);
+      } catch (err) {
+        logToConsole('[ERROR] No se pudo conectar con el servidor en la PC.\n', true);
+      }
+    }
+
+    async function loadDrives() {
+      try {
+        const res = await fetch('/api/drives');
+        const drives = await res.json();
+        updateDrivesList(drives);
+      } catch (err) {
+        logToConsole('[WARN] Fallo al actualizar unidades.\n', true);
+      }
+    }
+
+    function updateDrivesList(drives) {
+      // Keep "browser" as the first choice
+      const savedValue = destinationSelect.value;
+      destinationSelect.innerHTML = '<option value="browser">📲 Descargar en este dispositivo (móvil/PC)</option>';
+      
+      drives.forEach(d => {
+        const option = document.createElement('option');
+        option.value = d.path;
+        option.textContent = d.display;
+        if (d.free_bytes === 0) {
+          option.disabled = true;
+        }
+        destinationSelect.appendChild(option);
+      });
+
+      // Restore selection if it exists in the list
+      const optionExists = Array.from(destinationSelect.options).some(opt => opt.value === savedValue);
+      if (optionExists) {
+        destinationSelect.value = savedValue;
+      }
+    }
+
+    // Console Logging
+    function logToConsole(text, isError = false) {
+      const line = document.createElement('div');
+      line.className = 'console-line' + (isError ? ' error' : '');
+      line.textContent = text;
+      consoleBox.appendChild(line);
+      consoleBox.scrollTop = consoleBox.scrollHeight;
+    }
+
+    function clearConsole() {
+      consoleBox.innerHTML = '';
+    }
+
+    // Debounced video metadata retrieval
+    urlInput.addEventListener('input', () => {
+      clearTimeout(debounceTimer);
+      const url = urlInput.value.trim();
+      
+      if (!url) {
+        videoInfo.style.display = 'none';
+        validateForm();
+        return;
+      }
+
+      if (url.includes('youtube.com/') || url.includes('youtu.be/')) {
+        videoInfo.style.display = 'flex';
+        videoTitle.textContent = '🔍 Consultando detalles del video...';
+        videoChannel.textContent = 'Por favor, espera.';
+        
+        debounceTimer = setTimeout(async () => {
+          try {
+            const res = await fetch('/api/metadata', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ url: url })
+            });
+            const data = await res.json();
+            if (data.status === 'success') {
+              // Ensure URL hasn't changed since request
+              if (urlInput.value.trim() === url) {
+                videoTitle.textContent = '🎵 ' + data.title;
+                videoChannel.textContent = 'Canal: ' + data.uploader + (data.duration ? ` | Duración: ${data.duration}` : '');
+              }
+            } else {
+              if (urlInput.value.trim() === url) {
+                videoTitle.textContent = '⚠️ Detalles no disponibles.';
+                videoChannel.textContent = 'No se pudieron extraer los metadatos de YouTube.';
+              }
+            }
+          } catch (err) {
+            if (urlInput.value.trim() === url) {
+              videoTitle.textContent = '⚠️ Error de conexión.';
+              videoChannel.textContent = 'No se pudo conectar a YouTube.';
+            }
+          }
+        }, 800);
+      } else {
+        videoInfo.style.display = 'flex';
+        videoTitle.textContent = '⚠️ URL no válida.';
+        videoChannel.textContent = 'Por favor, introduce un enlace de YouTube válido.';
+      }
+      validateForm();
+    });
+
+    // Form Validator
+    function validateForm() {
+      const isUrlOk = urlInput.value.trim().includes('youtube.com/') || urlInput.value.trim().includes('youtu.be/');
+      const isConsentOk = consentCheckbox.checked;
+      
+      if (isUrlOk && isConsentOk && hasFfmpeg && serverState === 'ready') {
+        btnDownload.disabled = false;
+      } else {
+        btnDownload.disabled = true;
+      }
+    }
+
+    consentCheckbox.addEventListener('change', validateForm);
+
+    // Lock UI on active operation
+    function setUiState(state) {
+      serverState = state;
+      if (state === 'busy') {
+        btnDownload.disabled = true;
+        urlInput.disabled = true;
+        destinationSelect.disabled = true;
+        btnRefresh.disabled = true;
+        btnBrowse.disabled = true;
+        btnPaste.disabled = true;
+        btnUpdateYt.disabled = true;
+        consentCheckbox.disabled = true;
+      } else {
+        urlInput.disabled = false;
+        destinationSelect.disabled = false;
+        btnRefresh.disabled = false;
+        btnBrowse.disabled = false;
+        btnPaste.disabled = false;
+        btnUpdateYt.disabled = false;
+        consentCheckbox.disabled = false;
+        validateForm();
+      }
+    }
+
+    // Refresh drives
+    btnRefresh.addEventListener('click', async () => {
+      btnRefresh.disabled = true;
+      await loadDrives();
+      btnRefresh.disabled = false;
+    });
+
+    // Browse PC folder
+    btnBrowse.addEventListener('click', async () => {
+      // Trigger a note alerting phone users
+      if (!window.location.hostname.includes('localhost') && !window.location.hostname.includes('127.0.0.1')) {
+        showStatusModal('Explorador de la PC', 'Al estar en el celular, el selector de carpetas se abrirá físicamente en la pantalla de tu PC servidor.', 'info');
+      }
+      try {
+        const res = await fetch('/api/browse', { method: 'POST' });
+        const data = await res.json();
+        if (data.status === 'success') {
+          // Refresh to see custom folder
+          await loadDrives();
+          destinationSelect.value = data.path;
+        }
+      } catch (err) {
+        logToConsole('[ERROR] Fallo al invocar el selector de carpetas de la PC.\n', true);
+      }
+    });
+
+    // Clipboard paste
+    btnPaste.addEventListener('click', async () => {
+      try {
+        const text = await navigator.clipboard.readText();
+        urlInput.value = text;
+        // Trigger event
+        urlInput.dispatchEvent(new Event('input'));
+      } catch (err) {
+        // Fallback for non-supported browsers or permission denies
+        showStatusModal('Acceso al Portapapeles', 'No se pudo acceder al portapapeles automáticamente. Por favor, pega el enlace manualmente en la caja de texto.', 'info');
+      }
+    });
+
+    // Start SSE Stream
+    function startProgressStream(destination, videoTitleOriginal) {
+      if (activeEventSource) {
+        activeEventSource.close();
+      }
+
+      progressSection.style.display = 'flex';
+      clearConsole();
+      soundWave.classList.add('active');
+
+      activeEventSource = new EventSource('/api/stream');
+      
+      activeEventSource.onmessage = (e) => {
+        const data = JSON.parse(e.data);
+        
+        if (data.type === 'progress') {
+          progressBarFill.style.width = data.percent + '%';
+          progressStatus.textContent = data.status;
+          progressDetails.textContent = data.details;
+          
+          if (data.status.includes('completada') || data.status.includes('finalizada') || data.status.includes('ÉXITO')) {
+            soundWave.classList.remove('active');
+          }
+        }
+        else if (data.type === 'log') {
+          logToConsole(data.text, data.is_error);
+        }
+        else if (data.type === 'complete') {
+          activeEventSource.close();
+          soundWave.classList.remove('active');
+          setUiState('ready');
+          
+          progressBarFill.style.width = '100%';
+          progressStatus.textContent = '¡Proceso finalizado!';
+          progressDetails.textContent = 'Todo guardado con éxito.';
+
+          // If downloading to browser, trigger download
+          if (destination === 'browser' && data.download_url) {
+            logToConsole('[SISTEMA] Descarga en servidor completada. Transfiriendo archivo a tu navegador...\n');
+            const safeTitle = (videoTitleOriginal || 'audio').replace(/[^a-zA-Z0-9]/g, '_');
+            const finalUrl = `${data.download_url}?title=${encodeURIComponent(safeTitle)}`;
+            
+            // Trigger browser download anchor
+            const a = document.createElement('a');
+            a.href = finalUrl;
+            a.download = safeTitle + '.mp3';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            
+            showStatusModal('¡Descarga Completada!', 'El archivo MP3 se ha transferido y guardado directamente en tu dispositivo.', 'success');
+          } else {
+            showStatusModal('¡Guardado en PC/USB!', 'El archivo MP3 se ha copiado correctamente en la ruta seleccionada de tu PC/USB.', 'success');
+          }
+        }
+        else if (data.type === 'error') {
+          activeEventSource.close();
+          soundWave.classList.remove('active');
+          setUiState('ready');
+          showStatusModal('Error de Descarga', 'Ocurrió un error durante el proceso de descarga: \n' + data.message, 'error');
+        }
+      };
+
+      activeEventSource.onerror = (err) => {
+        logToConsole('[SISTEMA] Canal de streaming desconectado.\n');
+        activeEventSource.close();
+      };
+    }
+
+    // Download Trigger
+    btnDownload.addEventListener('click', async () => {
+      const url = urlInput.value.trim();
+      const destination = destinationSelect.value;
+      const originalTitleText = videoTitle.textContent.replace('🎵 ', '').trim();
+
+      if (!url) return;
+
+      setUiState('busy');
+      
+      try {
+        // Clear progress bar UI
+        progressBarFill.style.width = '0%';
+        progressStatus.textContent = 'Iniciando descarga...';
+        progressDetails.textContent = 'Conectando con la PC...';
+
+        startProgressStream(destination, originalTitleText);
+
+        const res = await fetch('/api/download', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: url, destination: destination })
+        });
+        
+        const responseData = await res.json();
+        if (responseData.status !== 'started') {
+          showStatusModal('Error de Inicio', 'No se pudo iniciar la descarga: ' + responseData.message, 'error');
+          if (activeEventSource) activeEventSource.close();
+          soundWave.classList.remove('active');
+          setUiState('ready');
+        }
+      } catch (err) {
+        showStatusModal('Error de Servidor', 'Ocurrió un error de red al enviar la solicitud de descarga al servidor de la PC.', 'error');
+        soundWave.classList.remove('active');
+        setUiState('ready');
+      }
+    });
+
+    // Update yt-dlp trigger
+    btnUpdateYt.addEventListener('click', async () => {
+      if (serverState === 'busy') return;
+      const confirm = window.confirm('¿Deseas buscar y descargar actualizaciones del motor de descarga en la PC?\nEsto puede tomar un minuto.');
+      if (!confirm) return;
+
+      setUiState('busy');
+      progressSection.style.display = 'flex';
+      clearConsole();
+      soundWave.classList.add('active');
+      progressBarFill.style.width = '10%';
+      progressStatus.textContent = 'Actualizando motor...';
+      progressDetails.textContent = 'Ejecutando actualización de yt-dlp en el servidor...';
+
+      startProgressStream('pc-update');
+
+      try {
+        const res = await fetch('/api/update', { method: 'POST' });
+        const data = await res.json();
+        if (data.status !== 'started') {
+          showStatusModal('Error de Actualización', 'No se pudo iniciar la actualización del motor: ' + data.message, 'error');
+          if (activeEventSource) activeEventSource.close();
+          soundWave.classList.remove('active');
+          setUiState('ready');
+        }
+      } catch (err) {
+        showStatusModal('Error de Conexión', 'Fallo de conexión al enviar la solicitud de actualización de yt-dlp al servidor.', 'error');
+        soundWave.classList.remove('active');
+        setUiState('ready');
+      }
+    });
+
+    // PWA Install Handling
+    let deferredPrompt = null;
+    const installBanner = document.getElementById('pwa-install-banner');
+    const installBtn = document.getElementById('pwa-install-btn');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      // Prevent browser default mini-infobar from appearing on mobile
+      e.preventDefault();
+      // Stash event to trigger later
+      deferredPrompt = e;
+      // Show install banner
+      installBanner.style.display = 'flex';
+    });
+
+    installBtn.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      // Show prompt
+      deferredPrompt.prompt();
+      // Wait for user choice
+      const { outcome } = await deferredPrompt.userChoice;
+      logToConsole(`[PWA] Respuesta del usuario a la instalación: ${outcome}\n`);
+      // Clear stashed prompt
+      deferredPrompt = null;
+      // Hide banner
+      installBanner.style.display = 'none';
+    });
+
+    window.addEventListener('appinstalled', (evt) => {
+      logToConsole('[PWA] Aplicación instalada correctamente en tu dispositivo.\n');
+      installBanner.style.display = 'none';
+    });
+
+    // Register Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then((reg) => {
+            console.log('PWA Service Worker registrado con éxito.', reg.scope);
+          })
+          .catch((err) => {
+            console.log('Fallo al registrar Service Worker:', err);
+          });
+      });
+    }
+
+    // Modal Helpers
+    function showStatusModal(title, message, type = 'info') {
+      const modal = document.getElementById('status-modal');
+      const card = document.getElementById('modal-card');
+      const icon = document.getElementById('modal-icon');
+      const titleText = document.getElementById('modal-title-text');
+      const msgText = document.getElementById('modal-msg-text');
+      const btn = document.getElementById('modal-btn');
+      
+      titleText.textContent = title;
+      msgText.textContent = message;
+      
+      // Clean classes
+      card.className = 'modal-card ' + type;
+      btn.className = 'btn modal-close-btn';
+      
+      if (type === 'success') {
+        icon.className = 'fa-solid fa-circle-check';
+        btn.classList.add('btn-green');
+      } else if (type === 'error') {
+        icon.className = 'fa-solid fa-circle-exclamation';
+        btn.classList.add('btn-blue');
+      } else {
+        icon.className = 'fa-solid fa-circle-info';
+        btn.classList.add('btn-blue');
+      }
+      
+      modal.style.display = 'flex';
+      modal.offsetHeight;
+      modal.classList.add('show');
+    }
+
+    function closeStatusModal() {
+      const modal = document.getElementById('status-modal');
+      modal.classList.remove('show');
+      setTimeout(() => {
+        modal.style.display = 'none';
+      }, 300);
+    }
+
+    // Init
+    loadServerStatus();
+  </script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+{
+  "name": "YouTube USB Audio Downloader",
+  "short_name": "YTUSB",
+  "description": "Descarga y convierte audio de YouTube a MP3 y guárdalo en tu USB o dispositivo móvil.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0F172A",
+  "theme_color": "#0F172A",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/static/icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any maskable"
+    }
+  ]
+}

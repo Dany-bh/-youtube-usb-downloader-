@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+config.json
+build/
+dist/
+.system_generated/
+*.mp3
+*.webm
+*.m4a
+*.part
+*.zip
+*.log
