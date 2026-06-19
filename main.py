@@ -149,7 +149,7 @@ class YouTubeUSBApp:
             [
                 ft.Row(
                     [
-                        ft.Icon(name=ft.Icons.PLAY_CIRCLE_FILLED, color=ft.Colors.BLUE_500, size=32),
+                        ft.Icon(ft.Icons.PLAY_CIRCLE_FILLED, color=ft.Colors.BLUE_500, size=32),
                         ft.Text(
                             "YouTube USB Downloader",
                             size=26,
@@ -193,7 +193,7 @@ class YouTubeUSBApp:
         self.meta_card = ft.Container(
             content=ft.Row(
                 [
-                    ft.Icon(name=ft.Icons.MUSIC_NOTE, color=ft.Colors.EMERALD_400, size=24),
+                    ft.Icon(ft.Icons.MUSIC_NOTE, color=ft.Colors.EMERALD_400, size=24),
                     ft.Column(
                         [
                             ft.Text("Ingresa un enlace para ver los detalles...", size=13, color=ft.Colors.BLUE_GREY_400, weight=ft.FontWeight.W_600, key="title"),
