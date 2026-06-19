@@ -4,18 +4,18 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch: # Permite compilar manualmente desde la pestaña Actions en GitHub
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Clonar el repositorio con el código fuente
+      # 1. Clonar el repositorio
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # 2. Configurar Java JDK (Requerido por Android SDK y Flutter)
+      # 2. Configurar Java JDK (Requerido para compilar Android)
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -28,38 +28,33 @@ jobs:
         with:
           python-version: '3.11'
 
-      # 4. Instalar Flet CLI y dependencias de compilación
-      - name: Install Flet
+      # 4. Instalar Flet y dependencias en el host de compilación
+      - name: Install Flet & dependencies
         run: |
           python -m pip install --upgrade pip
           pip install flet yt-dlp
 
-      # 5. Configurar Flutter (Flet lo usa en segundo plano para compilar)
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.19.x' # Versión estable compatible con Flet
-
-      # 6. Compilar el APK (Instalador directo en celulares)
+      # 5. Compilar el APK (Instalador directo en celulares)
       - name: Build Android APK
         run: |
-          flet build apk --project YouTubeDownloader --release
+          python -m flet build apk --project YouTubeDownloader --release --verbose
 
-      # 7. Compilar el AAB (Paquete optimizado que exige la Google Play Store)
+      # 6. Compilar el AAB (Para subir a Play Store)
       - name: Build Android App Bundle (AAB)
         run: |
-          flet build aab --project YouTubeDownloader --release
+          python -m flet build aab --project YouTubeDownloader --release --verbose
 
-      # 8. Subir el archivo APK compilado como artefacto de descarga
+      # 7. Subir el archivo APK
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: YouTubeDownloader-APK
           path: build/apk/*.apk
 
-      # 9. Subir el archivo AAB compilado como artefacto de descarga (Para subir a Play Store)
+      # 8. Subir el archivo AAB
       - name: Upload AAB Artifact
         uses: actions/upload-artifact@v4
         with:
           name: YouTubeDownloader-AAB
           path: build/aab/*.aab
+
