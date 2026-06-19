@@ -149,7 +149,7 @@ class YouTubeUSBApp:
             [
                 ft.Row(
                     [
-                        ft.Icon(name=ft.icons.PLAY_CIRCLE_FILL, color=ft.colors.BLUE_500, size=32),
+                        ft.Icon(name=ft.Icons.PLAY_CIRCLE_FILLED, color=ft.colors.BLUE_500, size=32),
                         ft.Text(
                             "YouTube USB Downloader",
                             size=26,
@@ -183,7 +183,7 @@ class YouTubeUSBApp:
         
         self.btn_paste = ft.ElevatedButton(
             "Pegar",
-            icon=ft.icons.PASTE,
+            icon=ft.Icons.PASTE,
             color=ft.colors.WHITE,
             bgcolor=ft.colors.BLUE_600,
             on_click=self.paste_clipboard
@@ -193,7 +193,7 @@ class YouTubeUSBApp:
         self.meta_card = ft.Container(
             content=ft.Row(
                 [
-                    ft.Icon(name=ft.icons.MUSIC_NOTE, color=ft.colors.EMERALD_400, size=24),
+                    ft.Icon(name=ft.Icons.MUSIC_NOTE, color=ft.colors.EMERALD_400, size=24),
                     ft.Column(
                         [
                             ft.Text("Ingresa un enlace para ver los detalles...", size=13, color=ft.colors.BLUE_GREY_400, weight=ft.FontWeight.W_600, key="title"),
@@ -223,14 +223,14 @@ class YouTubeUSBApp:
         )
         
         self.btn_refresh = ft.IconButton(
-            icon=ft.icons.ROTATE_RIGHT_SHARP,
+            icon=ft.Icons.ROTATE_RIGHT_SHARP,
             icon_color=ft.colors.BLUE_GREY_400,
             bgcolor="#0F172A",
             on_click=self.on_refresh_click
         )
         
         self.btn_browse = ft.IconButton(
-            icon=ft.icons.FOLDER_OPEN,
+            icon=ft.Icons.FOLDER_OPEN,
             icon_color=ft.colors.BLUE_GREY_400,
             bgcolor="#0F172A",
             visible=os.name == 'nt', # Only show folder picker on PC
@@ -281,7 +281,7 @@ class YouTubeUSBApp:
         # 6. Action Triggers
         self.btn_update = ft.ElevatedButton(
             "Actualizar Motor",
-            icon=ft.icons.CLOUD_DOWNLOAD,
+            icon=ft.Icons.CLOUD_DOWNLOAD,
             color=ft.colors.BLUE_GREY_200,
             bgcolor="#0F172A",
             on_click=self.update_yt_dlp,
@@ -290,7 +290,7 @@ class YouTubeUSBApp:
 
         self.btn_download = ft.ElevatedButton(
             "Descargar y Guardar",
-            icon=ft.icons.DOWNLOAD_FOR_OFFLINE,
+            icon=ft.Icons.DOWNLOAD_FOR_OFFLINE,
             color=ft.colors.WHITE,
             bgcolor=ft.colors.EMERALD_600,
             disabled=True,
@@ -785,7 +785,7 @@ class YouTubeUSBApp:
 
     def show_popup(self, title, message, type="info"):
         # Flet Alert Dialog with custom animations
-        icon_name = ft.icons.CHECK_CIRCLE if type == "success" else (ft.icons.ERROR_OUTLINE if type == "error" else ft.icons.INFO_OUTLINE)
+        icon_name = ft.Icons.CHECK_CIRCLE if type == "success" else (ft.Icons.ERROR_OUTLINE if type == "error" else ft.Icons.INFO_OUTLINE)
         icon_color = ft.colors.EMERALD_400 if type == "success" else (ft.colors.RED_400 if type == "error" else ft.colors.BLUE_400)
         
         def close_dialog(e):
