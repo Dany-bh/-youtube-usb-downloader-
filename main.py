@@ -193,7 +193,7 @@ class YouTubeUSBApp:
         self.meta_card = ft.Container(
             content=ft.Row(
                 [
-                    ft.Icon(ft.Icons.MUSIC_NOTE, color=ft.Colors.EMERALD_400, size=24),
+                    ft.Icon(ft.Icons.MUSIC_NOTE, color=ft.Colors.GREEN_400, size=24),
                     ft.Column(
                         [
                             ft.Text("Ingresa un enlace para ver los detalles...", size=13, color=ft.Colors.BLUE_GREY_400, weight=ft.FontWeight.W_600, key="title"),
@@ -205,7 +205,7 @@ class YouTubeUSBApp:
                 ]
             ),
             bgcolor="rgba(16, 185, 129, 0.05)",
-            border=ft.border.all(1, "rgba(16, 185, 129, 0.2)"),
+            border=ft.Border.all(1, "rgba(16, 185, 129, 0.2)"),
             border_radius=12,
             padding=12,
             visible=False
@@ -219,7 +219,7 @@ class YouTubeUSBApp:
             focused_border_color=ft.Colors.BLUE_500,
             text_size=14,
             expand=True,
-            on_change=self.on_destination_change
+            on_select=self.on_destination_change
         )
         
         self.btn_refresh = ft.IconButton(
@@ -248,7 +248,7 @@ class YouTubeUSBApp:
         # 5. STEP 4: Live Progress Monitoring
         self.progress_status = ft.Text("Preparando descarga...", size=13, weight=ft.FontWeight.BOLD)
         self.progress_details = ft.Text("Conectando...", size=11, color=ft.Colors.BLUE_GREY_400)
-        self.progress_bar = ft.ProgressBar(value=0, color=ft.Colors.EMERALD_500, bgcolor="#0F172A", height=8)
+        self.progress_bar = ft.ProgressBar(value=0, color=ft.Colors.GREEN_500, bgcolor="#0F172A", height=8)
         
         self.console_box = ft.TextField(
             multiline=True,
@@ -272,7 +272,7 @@ class YouTubeUSBApp:
                 spacing=8
             ),
             bgcolor="rgba(15, 23, 42, 0.4)",
-            border=ft.border.all(1, "#334155"),
+            border=ft.Border.all(1, "#334155"),
             border_radius=16,
             padding=16,
             visible=False
@@ -292,7 +292,7 @@ class YouTubeUSBApp:
             "Descargar y Guardar",
             icon=ft.Icons.DOWNLOAD_FOR_OFFLINE,
             color=ft.Colors.WHITE,
-            bgcolor=ft.Colors.EMERALD_600,
+            bgcolor=ft.Colors.GREEN_600,
             disabled=True,
             on_click=self.start_download
         )
@@ -341,7 +341,7 @@ class YouTubeUSBApp:
                 ),
                 padding=20,
                 bgcolor="rgba(30, 41, 59, 0.7)",
-                border=ft.border.all(1, "rgba(71, 85, 105, 0.4)"),
+                border=ft.Border.all(1, "rgba(71, 85, 105, 0.4)"),
                 border_radius=24,
                 shadow=ft.BoxShadow(blur_radius=30, color="rgba(0,0,0,0.4)")
             )
@@ -786,7 +786,7 @@ class YouTubeUSBApp:
     def show_popup(self, title, message, type="info"):
         # Flet Alert Dialog with custom animations
         icon_name = ft.Icons.CHECK_CIRCLE if type == "success" else (ft.Icons.ERROR_OUTLINE if type == "error" else ft.Icons.INFO_OUTLINE)
-        icon_color = ft.Colors.EMERALD_400 if type == "success" else (ft.Colors.RED_400 if type == "error" else ft.Colors.BLUE_400)
+        icon_color = ft.Colors.GREEN_400 if type == "success" else (ft.Colors.RED_400 if type == "error" else ft.Colors.BLUE_400)
         
         def close_dialog(e):
             dialog.open = False
