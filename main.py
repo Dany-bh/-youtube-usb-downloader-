@@ -149,20 +149,20 @@ class YouTubeUSBApp:
             [
                 ft.Row(
                     [
-                        ft.Icon(name=ft.Icons.PLAY_CIRCLE_FILLED, color=ft.colors.BLUE_500, size=32),
+                        ft.Icon(name=ft.Icons.PLAY_CIRCLE_FILLED, color=ft.Colors.BLUE_500, size=32),
                         ft.Text(
                             "YouTube USB Downloader",
                             size=26,
                             weight=ft.FontWeight.BOLD,
                             font_family="sans-serif",
-                            color=ft.colors.WHITE
+                            color=ft.Colors.WHITE
                         )
                     ],
                     alignment=ft.MainAxisAlignment.START
                 ),
                 ft.Text(
                     "Descarga y convierte videos directamente en tu móvil o PC.",
-                    color=ft.colors.BLUE_GREY_400,
+                    color=ft.Colors.BLUE_GREY_400,
                     size=13,
                     italic=True
                 )
@@ -175,7 +175,7 @@ class YouTubeUSBApp:
             hint_text="Pega el enlace de YouTube aquí...",
             bgcolor="#0F172A",
             border_color="#475569",
-            focused_border_color=ft.colors.BLUE_500,
+            focused_border_color=ft.Colors.BLUE_500,
             text_size=14,
             expand=True,
             on_change=self.on_url_change
@@ -184,8 +184,8 @@ class YouTubeUSBApp:
         self.btn_paste = ft.ElevatedButton(
             "Pegar",
             icon=ft.Icons.PASTE,
-            color=ft.colors.WHITE,
-            bgcolor=ft.colors.BLUE_600,
+            color=ft.Colors.WHITE,
+            bgcolor=ft.Colors.BLUE_600,
             on_click=self.paste_clipboard
         )
         
@@ -193,11 +193,11 @@ class YouTubeUSBApp:
         self.meta_card = ft.Container(
             content=ft.Row(
                 [
-                    ft.Icon(name=ft.Icons.MUSIC_NOTE, color=ft.colors.EMERALD_400, size=24),
+                    ft.Icon(name=ft.Icons.MUSIC_NOTE, color=ft.Colors.EMERALD_400, size=24),
                     ft.Column(
                         [
-                            ft.Text("Ingresa un enlace para ver los detalles...", size=13, color=ft.colors.BLUE_GREY_400, weight=ft.FontWeight.W_600, key="title"),
-                            ft.Text("", size=11, color=ft.colors.BLUE_GREY_500, key="channel")
+                            ft.Text("Ingresa un enlace para ver los detalles...", size=13, color=ft.Colors.BLUE_GREY_400, weight=ft.FontWeight.W_600, key="title"),
+                            ft.Text("", size=11, color=ft.Colors.BLUE_GREY_500, key="channel")
                         ],
                         spacing=2,
                         tight=True
@@ -216,7 +216,7 @@ class YouTubeUSBApp:
             label="Destino de la descarga",
             bgcolor="#0F172A",
             border_color="#475569",
-            focused_border_color=ft.colors.BLUE_500,
+            focused_border_color=ft.Colors.BLUE_500,
             text_size=14,
             expand=True,
             on_change=self.on_destination_change
@@ -224,14 +224,14 @@ class YouTubeUSBApp:
         
         self.btn_refresh = ft.IconButton(
             icon=ft.Icons.ROTATE_RIGHT_SHARP,
-            icon_color=ft.colors.BLUE_GREY_400,
+            icon_color=ft.Colors.BLUE_GREY_400,
             bgcolor="#0F172A",
             on_click=self.on_refresh_click
         )
         
         self.btn_browse = ft.IconButton(
             icon=ft.Icons.FOLDER_OPEN,
-            icon_color=ft.colors.BLUE_GREY_400,
+            icon_color=ft.Colors.BLUE_GREY_400,
             bgcolor="#0F172A",
             visible=os.name == 'nt', # Only show folder picker on PC
             on_click=self.browse_pc_directory
@@ -241,14 +241,14 @@ class YouTubeUSBApp:
         self.consent_checkbox = ft.Checkbox(
             label="Confirmo que tengo los derechos, licencias o la expresa autorización para descargar este audio.",
             value=False,
-            label_style=ft.TextStyle(color=ft.colors.BLUE_GREY_400, size=12),
+            label_style=ft.TextStyle(color=ft.Colors.BLUE_GREY_400, size=12),
             on_change=self.validate_form
         )
 
         # 5. STEP 4: Live Progress Monitoring
         self.progress_status = ft.Text("Preparando descarga...", size=13, weight=ft.FontWeight.BOLD)
-        self.progress_details = ft.Text("Conectando...", size=11, color=ft.colors.BLUE_GREY_400)
-        self.progress_bar = ft.ProgressBar(value=0, color=ft.colors.EMERALD_500, bgcolor="#0F172A", height=8)
+        self.progress_details = ft.Text("Conectando...", size=11, color=ft.Colors.BLUE_GREY_400)
+        self.progress_bar = ft.ProgressBar(value=0, color=ft.Colors.EMERALD_500, bgcolor="#0F172A", height=8)
         
         self.console_box = ft.TextField(
             multiline=True,
@@ -266,7 +266,7 @@ class YouTubeUSBApp:
                     ft.Row([self.progress_status], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
                     self.progress_details,
                     self.progress_bar,
-                    ft.Text("Consola de logs:", size=11, color=ft.colors.BLUE_GREY_400),
+                    ft.Text("Consola de logs:", size=11, color=ft.Colors.BLUE_GREY_400),
                     self.console_box
                 ],
                 spacing=8
@@ -282,7 +282,7 @@ class YouTubeUSBApp:
         self.btn_update = ft.ElevatedButton(
             "Actualizar Motor",
             icon=ft.Icons.CLOUD_DOWNLOAD,
-            color=ft.colors.BLUE_GREY_200,
+            color=ft.Colors.BLUE_GREY_200,
             bgcolor="#0F172A",
             on_click=self.update_yt_dlp,
             visible=os.name == 'nt' # update only available on python script PC
@@ -291,8 +291,8 @@ class YouTubeUSBApp:
         self.btn_download = ft.ElevatedButton(
             "Descargar y Guardar",
             icon=ft.Icons.DOWNLOAD_FOR_OFFLINE,
-            color=ft.colors.WHITE,
-            bgcolor=ft.colors.EMERALD_600,
+            color=ft.Colors.WHITE,
+            bgcolor=ft.Colors.EMERALD_600,
             disabled=True,
             on_click=self.start_download
         )
@@ -307,20 +307,20 @@ class YouTubeUSBApp:
                         
                         # Step 1 Section
                         ft.Column([
-                            ft.Text("Paso 1: Pegar enlace de YouTube", size=14, color=ft.colors.BLUE_500, weight=ft.FontWeight.W_600),
+                            ft.Text("Paso 1: Pegar enlace de YouTube", size=14, color=ft.Colors.BLUE_500, weight=ft.FontWeight.W_600),
                             ft.Row([self.url_input, self.btn_paste], spacing=10),
                             self.meta_card
                         ], spacing=6),
                         
                         # Step 2 Section
                         ft.Column([
-                            ft.Text("Paso 2: Destino de la descarga", size=14, color=ft.colors.BLUE_500, weight=ft.FontWeight.W_600),
+                            ft.Text("Paso 2: Destino de la descarga", size=14, color=ft.Colors.BLUE_500, weight=ft.FontWeight.W_600),
                             ft.Row([self.destination_dropdown, self.btn_refresh, self.btn_browse], spacing=10),
                         ], spacing=6),
                         
                         # Step 3 Section
                         ft.Column([
-                            ft.Text("Paso 3: Autorización legal", size=14, color=ft.colors.BLUE_500, weight=ft.FontWeight.W_600),
+                            ft.Text("Paso 3: Autorización legal", size=14, color=ft.Colors.BLUE_500, weight=ft.FontWeight.W_600),
                             self.consent_checkbox,
                         ], spacing=6),
                         
@@ -383,7 +383,7 @@ class YouTubeUSBApp:
         if "youtube.com/" in url or "youtu.be/" in url:
             self.meta_card.visible = True
             self.meta_card.content.controls[1].controls[0].value = "🔍 Consultando detalles del video..."
-            self.meta_card.content.controls[1].controls[0].color = ft.colors.BLUE_400
+            self.meta_card.content.controls[1].controls[0].color = ft.Colors.BLUE_400
             self.meta_card.content.controls[1].controls[1].value = "Por favor, espera..."
             self.page.update()
             
@@ -392,7 +392,7 @@ class YouTubeUSBApp:
         else:
             self.meta_card.visible = True
             self.meta_card.content.controls[1].controls[0].value = "⚠️ URL no válida."
-            self.meta_card.content.controls[1].controls[0].color = ft.colors.RED_400
+            self.meta_card.content.controls[1].controls[0].color = ft.Colors.RED_400
             self.meta_card.content.controls[1].controls[1].value = "Por favor, introduce un enlace de YouTube válido."
             self.page.update()
         self.validate_form(None)
@@ -419,13 +419,13 @@ class YouTubeUSBApp:
                     duration_str = f" | Duración: {mins}m {secs}s"
                 
                 self.meta_card.content.controls[1].controls[0].value = title
-                self.meta_card.content.controls[1].controls[0].color = ft.colors.WHITE
+                self.meta_card.content.controls[1].controls[0].color = ft.Colors.WHITE
                 self.meta_card.content.controls[1].controls[1].value = f"Canal: {uploader}{duration_str}"
                 self.page.update()
         except Exception:
             if self.url_input.value.strip() == url:
                 self.meta_card.content.controls[1].controls[0].value = "⚠️ Error de extracción."
-                self.meta_card.content.controls[1].controls[0].color = ft.colors.BLUE_GREY_400
+                self.meta_card.content.controls[1].controls[0].color = ft.Colors.BLUE_GREY_400
                 self.meta_card.content.controls[1].controls[1].value = "No se pudieron obtener los detalles."
                 self.page.update()
 
@@ -786,7 +786,7 @@ class YouTubeUSBApp:
     def show_popup(self, title, message, type="info"):
         # Flet Alert Dialog with custom animations
         icon_name = ft.Icons.CHECK_CIRCLE if type == "success" else (ft.Icons.ERROR_OUTLINE if type == "error" else ft.Icons.INFO_OUTLINE)
-        icon_color = ft.colors.EMERALD_400 if type == "success" else (ft.colors.RED_400 if type == "error" else ft.colors.BLUE_400)
+        icon_color = ft.Colors.EMERALD_400 if type == "success" else (ft.Colors.RED_400 if type == "error" else ft.Colors.BLUE_400)
         
         def close_dialog(e):
             dialog.open = False
@@ -795,7 +795,7 @@ class YouTubeUSBApp:
         dialog = ft.AlertDialog(
             modal=True,
             title=ft.Row([ft.Icon(icon_name, color=icon_color, size=30), ft.Text(title, weight=ft.FontWeight.BOLD)], spacing=10),
-            content=ft.Text(message, size=14, color=ft.colors.BLUE_GREY_200),
+            content=ft.Text(message, size=14, color=ft.Colors.BLUE_GREY_200),
             actions=[
                 ft.TextButton("Entendido", on_click=close_dialog, style=ft.ButtonStyle(color=icon_color))
             ],
