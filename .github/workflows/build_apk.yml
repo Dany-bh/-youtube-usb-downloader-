@@ -37,12 +37,12 @@ jobs:
       # 5. Compilar el APK (Instalador directo en celulares)
       - name: Build Android APK
         run: |
-          python -m flet.cli build apk --project YouTubeDownloader --release --verbose
+          python -m flet.cli build apk --project YouTubeDownloader --verbose
 
       # 6. Compilar el AAB (Para subir a Play Store)
       - name: Build Android App Bundle (AAB)
         run: |
-          python -m flet.cli build aab --project YouTubeDownloader --release --verbose
+          python -m flet.cli build aab --project YouTubeDownloader --verbose
 
       # 7. Subir el archivo APK
       - name: Upload APK Artifact
