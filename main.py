@@ -363,14 +363,16 @@ class YouTubeUSBApp:
         self.progress_details.value = details
         self.page.update()
 
-    def paste_clipboard(self, e):
+    async def paste_clipboard(self, e):
         # Read clip text directly from Flet page API
-        clip_text = self.page.get_clipboard()
+        clip_text = await self.page.clipboard.get()
         if clip_text:
             self.url_input.value = clip_text
             self.on_url_change(None)
         else:
-            self.page.show_snack_bar(ft.SnackBar(ft.Text("Portapapeles vacío o inaccesible.")))
+            self.page.snack_bar = ft.SnackBar(ft.Text("Portapapeles vacío o inaccesible."))
+            self.page.snack_bar.open = True
+            self.page.update()
 
     def on_url_change(self, e):
         url = self.url_input.value.strip()
