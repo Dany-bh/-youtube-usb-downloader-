@@ -503,13 +503,21 @@ class YouTubeUSBApp:
         self.page.update()
 
     async def browse_pc_directory(self, e):
-        # In Flet 0.85+, FilePicker is a service and returns the path directly when awaited
-        picker = ft.FilePicker()
-        path = await picker.get_directory_path(dialog_title="Seleccionar Carpeta de Destino")
-        if path:
-            self.selected_path = os.path.abspath(path)
-            save_config(self.selected_path)
-            self.refresh_destinations()
+        try:
+            # In Flet 0.85+, FilePicker is a service and returns the path directly when awaited
+            picker = ft.FilePicker()
+            path = await picker.get_directory_path(dialog_title="Seleccionar Carpeta de Destino")
+            if path:
+                self.selected_path = os.path.abspath(path)
+                save_config(self.selected_path)
+                self.refresh_destinations()
+        except Exception:
+            self.show_popup(
+                "Función no soportada",
+                "La selección manual de carpetas no es compatible en el navegador web por políticas de seguridad. "
+                "Esta función funciona perfectamente en la aplicación instalable (.APK) de tu celular y en PC.",
+                "info"
+            )
 
     def validate_form(self, e):
         url = self.url_input.value.strip()
