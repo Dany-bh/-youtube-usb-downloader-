@@ -676,13 +676,11 @@ class YouTubeUSBApp:
                 
         if selected_index != -1:
             self.usb_combobox.set(displays[selected_index])
-        elif displays:
-            # If our selected path isn't found and we have options, select the first one
-            self.usb_combobox.set(displays[0])
-            self.selected_path = drives_list[0]['path']
-            self.save_config(self.selected_path)
         else:
-            self.usb_combobox.set("--- No se detectaron memorias USB o carpetas ---")
+            if displays:
+                self.usb_combobox.set("--- Selecciona un destino de descarga ---")
+            else:
+                self.usb_combobox.set("--- No se detectaron memorias USB o carpetas ---")
             self.selected_path = ""
 
     def auto_scan_usbs(self):

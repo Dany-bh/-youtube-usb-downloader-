@@ -501,12 +501,12 @@ class YouTubeUSBApp:
                     self.destination_dropdown.value = d['path']
                     found = True
                     break
-            if not found and options:
-                self.destination_dropdown.value = options[0].key
-                self.selected_path = options[0].key
-        elif options:
-            self.destination_dropdown.value = options[0].key
-            self.selected_path = options[0].key
+            if not found:
+                self.destination_dropdown.value = None
+                self.selected_path = ""
+        else:
+            self.destination_dropdown.value = None
+            self.selected_path = ""
             
         self.page.update()
 
