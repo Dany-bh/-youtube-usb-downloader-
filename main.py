@@ -506,7 +506,7 @@ class YouTubeUSBApp:
         # Flet handles native folder picker securely in local environments
         # We can implement using the Flet FilePicker component if needed, 
         # but in local scripts, standard python is fine. Let's do Flet FilePicker:
-        def on_picker_result(res: ft.FilePickerResultEvent):
+        def on_picker_result(res):
             if res.path:
                 path = os.path.abspath(res.path)
                 self.selected_path = path
