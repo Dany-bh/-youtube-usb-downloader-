@@ -502,21 +502,14 @@ class YouTubeUSBApp:
             
         self.page.update()
 
-    def browse_pc_directory(self, e):
-        # Flet handles native folder picker securely in local environments
-        # We can implement using the Flet FilePicker component if needed, 
-        # but in local scripts, standard python is fine. Let's do Flet FilePicker:
-        def on_picker_result(res):
-            if res.path:
-                path = os.path.abspath(res.path)
-                self.selected_path = path
-                save_config(self.selected_path)
-                self.refresh_destinations()
-                
-        picker = ft.FilePicker(on_result=on_picker_result)
-        self.page.overlay.append(picker)
-        self.page.update()
-        picker.get_directory_path(dialog_title="Seleccionar Carpeta de Destino")
+    async def browse_pc_directory(self, e):
+        # In Flet 0.85+, FilePicker is a service and returns the path directly when awaited
+        picker = ft.FilePicker()
+        path = await picker.get_directory_path(dialog_title="Seleccionar Carpeta de Destino")
+        if path:
+            self.selected_path = os.path.abspath(path)
+            save_config(self.selected_path)
+            self.refresh_destinations()
 
     def validate_form(self, e):
         url = self.url_input.value.strip()
