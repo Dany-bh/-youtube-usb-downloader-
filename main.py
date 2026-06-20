@@ -144,7 +144,6 @@ class YouTubeUSBApp:
         self.refresh_destinations()
         
     def create_widgets(self):
-        # 1. Title Header
         self.header = ft.Column(
             [
                 ft.Row(
@@ -158,16 +157,18 @@ class YouTubeUSBApp:
                             color=ft.Colors.WHITE
                         )
                     ],
-                    alignment=ft.MainAxisAlignment.START
+                    alignment=ft.MainAxisAlignment.CENTER
                 ),
                 ft.Text(
                     "Descarga y convierte videos directamente en tu móvil o PC.",
                     color=ft.Colors.BLUE_GREY_400,
                     size=13,
-                    italic=True
+                    italic=True,
+                    text_align=ft.TextAlign.CENTER
                 )
             ],
-            spacing=5
+            spacing=5,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER
         )
 
         # 2. STEP 1: Paste Link
