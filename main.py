@@ -364,13 +364,20 @@ class YouTubeUSBApp:
         self.page.update()
 
     async def paste_clipboard(self, e):
-        # Read clip text directly from Flet page API
-        clip_text = await self.page.clipboard.get()
-        if clip_text:
-            self.url_input.value = clip_text
-            self.on_url_change(None)
-        else:
-            self.page.snack_bar = ft.SnackBar(ft.Text("Portapapeles vacío o inaccesible."))
+        try:
+            # Read clip text directly from Flet page API
+            clip_text = await self.page.clipboard.get()
+            if clip_text:
+                self.url_input.value = clip_text
+                self.on_url_change(None)
+            else:
+                self.page.snack_bar = ft.SnackBar(ft.Text("Portapapeles vacío o inaccesible."))
+                self.page.snack_bar.open = True
+                self.page.update()
+        except Exception:
+            self.page.snack_bar = ft.SnackBar(
+                ft.Text("Permiso de portapapeles denegado. Intenta pegar el enlace manualmente.")
+            )
             self.page.snack_bar.open = True
             self.page.update()
 
